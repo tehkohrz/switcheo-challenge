@@ -12,7 +12,7 @@ module.exports = {
    * $ truffle test --network <network-name>
    */
   api_keys: {
-    bscscan: process.env.BSCSCANAPIKEY,
+    bscscan: 'QZMV7SW7TNR1U2F3EZDWBB5EF9Y66A1D1A',
   },
   dashboard: {
     port: 24012,
@@ -27,7 +27,7 @@ module.exports = {
     bscTestnet: {
       provider: () =>
         new HDWalletProvider(
-          process.env.mnemonic,
+          'eagle large alley glimpse calm kiss they index fame able episode obvious',
           'https://data-seed-prebsc-1-s3.binance.org:8545/'
         ),
       network_id: 97,
