@@ -25,9 +25,13 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "type": "module",
   "dependencies": {
-    "ethers": "^5.7.2"
+    "@truffle/hdwallet-provider": "^2.1.5",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "solc": "^0.8.17",
+    "truffle": "^5.7.4",
+    "ts-node": "^10.9.1"
   }
 }
 
