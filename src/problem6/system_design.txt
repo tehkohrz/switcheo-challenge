@@ -1,30 +1,30 @@
 ASSUMPTIONS
-1. 1. 1% of the time, it does not respond earlier than 30 seconds. 
+1. 1% of the time, it does not respond earlier than 30 seconds. 
 2. 95% of the time it responds with a success code within 20-30 seconds. 
 3. The rest of the time it returns a failure code.
 4. Successful broadcast represents passed or failed. Broadcast that returns will failure code will not be retried.
 
 Design Considerations:
-The broadcast service will need to be secure, efficient and scalable. Recording is necessary to show past transactions succesfully broadcasted. To ensure reliability that transactions recieved will be broadcasted even if the service restarts.
+The broadcast service will need to be secure, efficient and scalable. Recording is necessary to show past transactions successfully broadcasted. To ensure reliability that transactions received will be broadcasted even if the service restarts.
 
 High Level Architecture
 components
-1. API Gateway: An entry for the cilents and routing of request to the sub-services before actual broadcast.
+1. API Gateway: An entry for the clients and routing of request to the sub-services before actual broadcast.
   a. In order to allow for admin action, additional end-point will be necessary to allow the admins to make specific request such as retrying a failed broadcast.
-2. Transaction Validation Sub-Service: This service will validate that the data is suitable for broadcast. Checks such as sufficient funds and authorization will be carried out here before signing the transaction. Signed transactions will be passed into the queue sub-service. This service will need to be optimised to ensure low latency of the broadcast service. Response status will be returned to the cilent upon successful validation.
-3. Queue Sub-Service: To ensure that the broadcast service is able to handle high traffice loads, requests will be inserted into a queue sub-service.
+2. Transaction Validation Sub-Service: This service will validate that the data is suitable for broadcast. Checks such as sufficient funds and authorization will be carried out here before signing the transaction. Signed transactions will be passed into the queue sub-service. This service will need to be optimised to ensure low latency of the broadcast service. Response status will be returned to the client upon successful validation.
+3. Queue Sub-Service: To ensure that the broadcast service is able to handle high traffic loads, requests will be inserted into a queue sub-service.
   a. The queue will allocate requests to free the broadcasting nodes.
   b. Queue operations can take the form of only dequeue when broadcast is successful but also make the current request invisible in the queue in order to allocate the next request to an available node.
   c. The queue may also implement load monitoring to increase the number of broadcasting instances to handle higher traffic volume and reduce latency.
-  d. A Dead Letter Queue can be implemente to handle request take have exceeded multiples tries.
+  d. A Dead Letter Queue can be implemented to handle request take have exceeded multiples tries.
 4. Datastore: Requests that have been accepted and inserted into the queue would be written into a datastore. The datastore will maintain the transaction broadcast status such as pending, passed or failed. Each record should include a queue identified to maintain the queue order in the event of the service restarting. The queue subservice will lookup pending broadcasts and re-queue the requests for processing upon startup.
   a. This datastore will provide data to the view showing the history of transactions.
   b. Transaction record will be updated upon successful broadcast (passed/failed).
-5. Broadcast Sub-Service: Requests will be sent to this serivice for broadcast.
-  a. Broadcast will be attempted for 30s before timeout and retried. As the occurence for processing greater than 30s is 1% it would be more efficient to retry after 30s.
+5. Broadcast Sub-Service: Requests will be sent to this service for broadcast.
+  a. Broadcast will be attempted for 30s before timeout and retried. As the occurrence for processing greater than 30s is 1% it would be more efficient to retry after 30s.
   b. A limit number of attempts can be implemented to identify erroneous broadcasts for further investigation.
   c. Upon successful broadcast the transaction record will be updated within the datastore.
-  d. Batch processing can be implemente to minimize the calls required for broadcasting multiple transactions.
+  d. Batch processing can be implemented to minimize the calls required for broadcasting multiple transactions.
 
 Additional Points:
 Security: Security is essential to protect the transactions and the broadcasting service. The validation service should implement anti-fraud measures to verify request source and authenticity. The datastore should implement encryption to protect the data from unauthorised access.

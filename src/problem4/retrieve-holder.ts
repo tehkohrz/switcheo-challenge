@@ -1,4 +1,4 @@
-const { BigNumber, ethers } = require('ethers');
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 // import { abi as switcheoABI, accountAddresses } from './datasource.js';
 // your code here:
 const switcheoABI = [
@@ -190,9 +190,7 @@ const main = async () => {
   const output: (string | undefined)[] = await Promise.all(
     accountAddresses.map(async (address: string) => {
       try {
-        const currentBalance: typeof BigNumber[] = await switcheoContract.functions.balanceOf(
-          address
-        );
+        const currentBalance: BigNumberish[] = await switcheoContract.functions.balanceOf(address);
         const formatedBalance = ethers.utils.formatUnits(currentBalance[0], switcheoUnits);
         const outputLine = `${address} ${formatedBalance}`;
         return outputLine;
